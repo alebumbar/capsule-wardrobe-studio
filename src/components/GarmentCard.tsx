@@ -1,14 +1,20 @@
 import type { Garment } from "../types/garment";
+import { useState } from "react";
 
 type GarmentCardProps = {
     garment: Garment;
+    onDelete(garmentId: string): void;
 };
 
 function formatLabel(value: string) {
     return value.replaceAll("-", " ");
 }
 
-export function GarmentCard({ garment }: GarmentCardProps) {
+export function GarmentCard({
+    garment,
+    onDelete,
+}: GarmentCardProps) {
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
     const titleId = `garment-${garment.id}-title`;
 
     const addedOn = new Intl.DateTimeFormat("en-GB", {
@@ -51,6 +57,42 @@ export function GarmentCard({ garment }: GarmentCardProps) {
                 <time dateTime={garment.createdAt}>
                     Added {addedOn}
                 </time>
+                {isConfirmingDelete ? (
+                    <div
+                        className="garment-card__confirmation"
+                        role="group"
+                        aria-label={`Remove ${garment.name}?`}
+                    >
+                        <p>Remove this garment?</p>
+
+                        <div className="garment-card__confirmation-actions">
+                            <button
+                                className="button button--secondary"
+                                type="button"
+                                onClick={() => setIsConfirmingDelete(false)}
+                            >
+                                Keep it
+                            </button>
+
+                            <button
+                                className="button button--danger"
+                                type="button"
+                                onClick={() => onDelete(garment.id)}
+                            >
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <button
+                        className="garment-card__remove"
+                        type="button"
+                        aria-label={`Remove ${garment.name}`}
+                        onClick={() => setIsConfirmingDelete(true)}
+                    >
+                        Remove
+                    </button>
+                )}
             </div>
         </article>
     )

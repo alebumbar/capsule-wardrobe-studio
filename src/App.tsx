@@ -43,6 +43,12 @@ export function App() {
     setIsAddPanelOpen(false);
   }
 
+  function handleDeleteGarment(garmentId: string) {
+    setGarments((currentGarments) =>
+      currentGarments.filter((g) => g.id !== garmentId),
+    );
+  }
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#main-content">
@@ -82,7 +88,9 @@ export function App() {
             <ul className="garment-grid">
               {garments.map((garment) => (
                 <li key={garment.id}>
-                  <GarmentCard garment={garment} />
+                  <GarmentCard garment={garment}
+                    onDelete={handleDeleteGarment}
+                  />
                 </li>
               ))}
             </ul>

@@ -126,6 +126,53 @@ body {
   font-size: 0.75rem;
 }
 
+.garment-card__remove {
+  margin-top: var(--space-4);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.garment-card__remove:hover {
+  color: var(--color-text);
+}
+
+.garment-card__remove:focus-visible {
+  border-radius: 0.2rem;
+  outline: 3px solid rgb(109 69 55 / 18%);
+  outline-offset: 3px;
+}
+
+.garment-card__confirmation {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.garment-card__confirmation p {
+  margin: 0 0 var(--space-3);
+  font-weight: 600;
+}
+
+.garment-card__confirmation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.button--danger {
+  background: #8a3328;
+  color: white;
+}
+
+.button--danger:hover {
+  background: #6f281f;
+}
+
 button,
 input,
 select,
