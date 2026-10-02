@@ -7,8 +7,7 @@ import {
     type Garment
 } from "../types/garment";
 import { FormField } from "./FormField";
-
-const MAX_IMAGE_SIZE_BYTES = 750_000;
+import { GarmentImageField } from "./GarmentImageField";
 
 type GarmentFormProps = {
     initialGarment?: Garment;
@@ -36,51 +35,6 @@ export function GarmentForm({
         initialGarment?.season ?? "",
     );
     const [imageUrl, setImageUrl] = useState(initialGarment?.imageUrl ?? "");
-    const [imageError, setImageError] = useState("");
-
-    function handleImageChange(
-        event: React.ChangeEvent<HTMLInputElement>,
-    ) {
-        const file = event.target.files?.[0];
-
-        setImageError("");
-
-        if (!file) {
-            return;
-        }
-        const supportedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/webp",
-        ];
-
-        if (!supportedTypes.includes(file.type)) {
-            setImageError("Choose a JPEG, PNG, or WebP image.");
-            event.target.value = "";
-            return;
-        }
-        if (file.size > MAX_IMAGE_SIZE_BYTES) {
-            setImageError("Choose an image smaller than 750 KB.");
-            event.target.value = "";
-            return;
-        }
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            if (typeof reader.result === "string") {
-                setImageUrl(reader.result);
-            }
-        };
-
-        reader.onerror = () => {
-            setImageError(
-                "The image could not be read. Try another file.",
-            );
-        };
-
-        reader.readAsDataURL(file);
-
-    }
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -107,51 +61,10 @@ export function GarmentForm({
     return (
         <form className="garment-form" onSubmit={handleSubmit}>
             <div>
-                <FormField
-                    id="garment-image"
-                    label="Garment photo"
-                    hint="JPEG, PNG, or WebP. Maximum 750 KB."
-                >
-                    {imageUrl && (
-                        <div className="image-preview">
-                            <img
-                                src={imageUrl}
-                                alt="Selected garment preview"
-                            />
-
-                            <button
-                                className="garment-card__action"
-                                type="button"
-                                onClick={() => setImageUrl("")}
-                            >
-                                Remove photo
-                            </button>
-                        </div>
-                    )}
-
-                    <input
-                        id="garment-image"
-                        name="image"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={handleImageChange}
-                        aria-describedby={
-                            imageError
-                                ? "garment-image-hint garment-image-error"
-                                : "garment-image-hint"
-                        }
-                    />
-
-                    {imageError && (
-                        <p
-                            id="garment-image-error"
-                            className="form-field__error"
-                            role="alert"
-                        >
-                            {imageError}
-                        </p>
-                    )}
-                </FormField>
+                <GarmentImageField
+                    value={imageUrl}
+                    onChange={setImageUrl}
+                />
                 <FormField
                     id="garment-name"
                     label="Garment name"

@@ -13,7 +13,7 @@ export function FormField({
     hint,
     children,
 }: FormFieldProps) {
-    const hintId = '${id}-hint';
+    const hintId = `${id}-hint`;
 
     return (
     <div className="form-field">
