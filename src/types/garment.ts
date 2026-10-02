@@ -16,5 +16,6 @@ export type Garment = {
     category: GarmentCategory;
     primaryColour: string;
     season: GarmentSeason;
+    imageUrl?: string;
     createdAt: string;
-}
+};

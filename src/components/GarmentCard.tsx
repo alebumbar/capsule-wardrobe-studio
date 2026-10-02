@@ -34,9 +34,16 @@ export function GarmentCard({
                 className="garment-card__visual"
                 aria-hidden="true"
             >
-                <span>
-                    {garment.category.charAt(0).toUpperCase()}
-                </span>
+                {garment.imageUrl ? (
+                    <img
+                        src={garment.imageUrl}
+                        alt=""
+                    />
+                ) : (
+                    <span>
+                        {garment.category.charAt(0).toUpperCase()}
+                    </span>
+                )}
             </div>
 
             <div

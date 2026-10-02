@@ -210,4 +210,122 @@ describe("App", () => {
     expect(screen.getAllByRole("article")).toHaveLength(1);
   });
 
+  it("closes the form with Escape and restores focus", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const openButton = screen.getByRole("button", {
+      name: "Add your first garment",
+    });
+
+    await user.click(openButton);
+
+    expect(
+      screen.getByRole("textbox", {
+        name: "Garment name",
+      }),
+    ).toHaveFocus();
+
+    await user.keyboard("{Escape}");
+
+    expect(
+      screen.queryByRole("dialog"),
+    ).not.toBeInTheDocument();
+
+    expect(openButton).toHaveFocus();
+  });
+
+  it("validates, saves, and restores a garment photo", async () => {
+    const user = userEvent.setup();
+    const { unmount } = render(<App />);
+
+    await user.click(
+      screen.getByRole("button", {
+        name: "Add your first garment",
+      }),
+    );
+
+    const dialog = screen.getByRole("dialog", {
+      name: "Add a garment",
+    });
+    const imageInput = within(dialog).getByLabelText("Garment photo");
+
+    const oversizedImage = new File(
+      [new Uint8Array(750_001)],
+      "large-garment.png",
+      { type: "image/png" },
+    );
+
+    await user.upload(imageInput, oversizedImage);
+
+    expect(
+      await within(dialog).findByRole("alert"),
+    ).toHaveTextContent("Choose an image smaller than 750 KB.");
+
+    const validImage = new File(
+      ["small garment image"],
+      "linen-blazer.png",
+      { type: "image/png" },
+    );
+
+    await user.upload(imageInput, validImage);
+
+    const preview = await within(dialog).findByAltText(
+      "Selected garment preview",
+    );
+    const previewSource = preview.getAttribute("src");
+
+    expect(previewSource).toMatch(/^data:image\/png;base64,/);
+    expect(within(dialog).queryByRole("alert")).not.toBeInTheDocument();
+
+    await user.type(
+      within(dialog).getByRole("textbox", {
+        name: "Garment name",
+      }),
+      "Black linen blazer",
+    );
+    await user.selectOptions(
+      within(dialog).getByRole("combobox", {
+        name: "Category",
+      }),
+      "outerwear",
+    );
+    await user.type(
+      within(dialog).getByRole("textbox", {
+        name: "Primary colour",
+      }),
+      "Black",
+    );
+    await user.selectOptions(
+      within(dialog).getByRole("combobox", {
+        name: "Season",
+      }),
+      "autumn-winter",
+    );
+    await user.click(
+      within(dialog).getByRole("button", {
+        name: "Add garment",
+      }),
+    );
+
+    const savedCard = screen.getByRole("article", {
+      name: "Black linen blazer",
+    });
+    expect(savedCard.querySelector("img")).toHaveAttribute(
+      "src",
+      previewSource,
+    );
+
+    unmount();
+    render(<App />);
+
+    const restoredCard = screen.getByRole("article", {
+      name: "Black linen blazer",
+    });
+    expect(restoredCard.querySelector("img")).toHaveAttribute(
+      "src",
+      previewSource,
+    );
+  });
+
 });

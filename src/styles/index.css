@@ -69,6 +69,13 @@ body {
   aspect-ratio: 4 / 5;
   background: #ded9cf;
   color: #81776c;
+  overflow: hidden;
+}
+
+.garment-card__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .garment-card__visual span {
@@ -457,6 +464,21 @@ a:focus-visible {
   outline-offset: 1px;
 }
 
+.form-field input[type="file"] {
+  padding: var(--space-2);
+}
+
+.form-field input[type="file"]::file-selector-button {
+  margin-right: var(--space-3);
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: calc(var(--radius-sm) / 1.5);
+  background: var(--color-canvas);
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .form-field__hint {
   margin: 0;
   color: var(--color-text-muted);
@@ -510,4 +532,29 @@ a:focus-visible {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.image-preview {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.image-preview img {
+  width: min(100%, 14rem);
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+}
+
+.image-preview .garment-card__action {
+  width: fit-content;
+}
+
+.form-field__error {
+  margin: 0;
+  color: #8a3328;
+  font-size: 0.8125rem;
+  line-height: 1.5;
 }

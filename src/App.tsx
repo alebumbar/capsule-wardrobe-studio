@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EmptyWardrobe } from "./components/EmptyWardrobe";
 import { GarmentForm } from "./components/GarmentForm";
 import type { Garment } from "./types/garment";
 import { GarmentCard } from "./components/GarmentCard";
-
 
 const GARMENTS_STORAGE_KEY = "elan.garments.v1";
 
@@ -35,11 +34,19 @@ export function App() {
   const [garments, setGarments] = useState<Garment[]>(loadGarments);
 
   function openAddGarmentForm() {
+    rememberCurrentFocus();
     setGarmentFormState({ mode: "add" });
   }
 
   function closeGarmentForm() {
     setGarmentFormState(null);
+  }
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+
+  function rememberCurrentFocus() {
+    if (document.activeElement instanceof HTMLElement) {
+      returnFocusRef.current = document.activeElement;
+    }
   }
 
   useEffect(() => {
@@ -48,7 +55,31 @@ export function App() {
     );
   }, [garments]);
 
+  useEffect(() => {
+    if (garmentFormState === null && returnFocusRef.current) {
+      returnFocusRef.current.focus();
+      returnFocusRef.current = null;
+    }
+  }, [garmentFormState]);
+
+  useEffect(() => {
+    if (!garmentFormState) {
+      return;
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event?.preventDefault();
+        setGarmentFormState(null);
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    }
+  }, [garmentFormState]);
+
   function openEditGarmentForm(garment: Garment) {
+    rememberCurrentFocus();
     setGarmentFormState({
       mode: "edit",
       garment,
