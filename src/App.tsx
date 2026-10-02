@@ -4,6 +4,7 @@ import { GarmentForm } from "./components/GarmentForm";
 import type { Garment } from "./types/garment";
 import { GarmentCard } from "./components/GarmentCard";
 
+
 const GARMENTS_STORAGE_KEY = "elan.garments.v1";
 
 function loadGarments(): Garment[] {
@@ -24,9 +25,22 @@ function loadGarments(): Garment[] {
   }
 }
 
+type GarmentFormState =
+  | { mode: "add" }
+  | { mode: "edit"; garment: Garment }
+  | null;
+
 export function App() {
-  const [isAddPanelOpen, setIsAddPanelOpen] = useState(false);
+  const [garmentFormState, setGarmentFormState] = useState<GarmentFormState>(null);
   const [garments, setGarments] = useState<Garment[]>(loadGarments);
+
+  function openAddGarmentForm() {
+    setGarmentFormState({ mode: "add" });
+  }
+
+  function closeGarmentForm() {
+    setGarmentFormState(null);
+  }
 
   useEffect(() => {
     localStorage.setItem(
@@ -34,13 +48,25 @@ export function App() {
     );
   }, [garments]);
 
-  function handleAddGarment(garment: Garment) {
-    setGarments((currentGarments) => [
-      ...currentGarments,
+  function openEditGarmentForm(garment: Garment) {
+    setGarmentFormState({
+      mode: "edit",
       garment,
-    ]);
+    })
+  }
 
-    setIsAddPanelOpen(false);
+  function handleSaveGarment(garment: Garment) {
+    setGarments((currentGarments) => {
+      if (garmentFormState?.mode === "edit") {
+        return currentGarments.map((currentGarment) =>
+          currentGarment.id === garment.id
+            ? garment
+            : currentGarment,
+        );
+      }
+      return [...currentGarments, garment];
+    });
+    closeGarmentForm();
   }
 
   function handleDeleteGarment(garmentId: string) {
@@ -65,7 +91,7 @@ export function App() {
             <li><a href="#outfits">Outfits</a></li>
           </ul>
         </nav>
-        <button className="button button--primary" onClick={() => setIsAddPanelOpen(true)}>
+        <button className="button button--primary" onClick={openAddGarmentForm}>
           Add garment
         </button>
       </header>
@@ -82,13 +108,15 @@ export function App() {
         <section id="wardrobe" aria-label="Wardrobe garments">
           {garments.length === 0 ? (
             <EmptyWardrobe
-              onAddGarment={() => setIsAddPanelOpen(true)}
+              onAddGarment={openAddGarmentForm}
             />
           ) : (
             <ul className="garment-grid">
               {garments.map((garment) => (
                 <li key={garment.id}>
-                  <GarmentCard garment={garment}
+                  <GarmentCard
+                    garment={garment}
+                    onEdit={openEditGarmentForm}
                     onDelete={handleDeleteGarment}
                   />
                 </li>
@@ -98,7 +126,7 @@ export function App() {
         </section>
       </main>
 
-      {isAddPanelOpen && (
+      {garmentFormState && (
         <div className="panel-backdrop" role="presentation">
           <section
             className="panel"
@@ -108,11 +136,20 @@ export function App() {
           >
             <div>
               <p className="eyebrow">First milestone</p>
-              <h2 id="panel-title">Add a garment</h2>
+              <h2 id="panel-title">
+                {garmentFormState.mode === "edit"
+                  ? "Edit garment"
+                  : "Add a garment"}
+              </h2>
             </div>
             <GarmentForm
-              onCancel={() => setIsAddPanelOpen(false)}
-              onSubmit={handleAddGarment}
+              initialGarment={
+                garmentFormState.mode === "edit"
+                  ? garmentFormState.garment
+                  : undefined
+              }
+              onCancel={closeGarmentForm}
+              onSubmit={handleSaveGarment}
             />
           </section>
         </div>

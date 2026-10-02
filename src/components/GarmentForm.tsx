@@ -9,15 +9,30 @@ import {
 import { FormField } from "./FormField";
 
 type GarmentFormProps = {
+    initialGarment?: Garment;
     onCancel: () => void;
     onSubmit: (garment: Garment) => void;
 };
 
-export function GarmentForm({ onCancel, onSubmit, }: GarmentFormProps) {
-    const [name, setName] = useState("");
-    const [category, setCategory] = useState<GarmentCategory | "">("");
-    const [primaryColour, setPrimaryColour] = useState("");
-    const [season, setSeason] = useState<GarmentSeason | "">("");
+export function GarmentForm({
+    initialGarment,
+    onCancel,
+    onSubmit,
+}: GarmentFormProps) {
+
+    const [name, setName] = useState(
+        initialGarment?.name ?? "",
+    );
+
+    const [category, setCategory] = useState<GarmentCategory | "">(
+        initialGarment?.category ?? "",
+    );
+    const [primaryColour, setPrimaryColour] = useState(
+        initialGarment?.primaryColour ?? "",
+    );
+    const [season, setSeason] = useState<GarmentSeason | "">(
+        initialGarment?.season ?? "",
+    );
 
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -29,12 +44,12 @@ export function GarmentForm({ onCancel, onSubmit, }: GarmentFormProps) {
             return;
         }
         const garment: Garment = {
-            id: crypto.randomUUID(),
+            id: initialGarment?.id ?? crypto.randomUUID(),
             name: trimmedName,
             category,
             primaryColour: trimmedColour,
             season,
-            createdAt: new Date().toISOString(),
+            createdAt: initialGarment?.createdAt ?? new Date().toISOString(),
         };
         onSubmit(garment);
     }
@@ -134,7 +149,7 @@ export function GarmentForm({ onCancel, onSubmit, }: GarmentFormProps) {
                 <button
                     className="button button--primary"
                     type="submit">
-                    Add garment
+                    {initialGarment ? "Save changes" : "Add garment"}
                 </button>
             </div>
         </form>

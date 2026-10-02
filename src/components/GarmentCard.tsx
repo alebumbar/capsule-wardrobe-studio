@@ -3,7 +3,8 @@ import { useState } from "react";
 
 type GarmentCardProps = {
     garment: Garment;
-    onDelete(garmentId: string): void;
+    onEdit: (garment: Garment) => void;
+    onDelete: (garmentId: string) => void;
 };
 
 function formatLabel(value: string) {
@@ -12,6 +13,7 @@ function formatLabel(value: string) {
 
 export function GarmentCard({
     garment,
+    onEdit,
     onDelete,
 }: GarmentCardProps) {
     const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
@@ -84,14 +86,25 @@ export function GarmentCard({
                         </div>
                     </div>
                 ) : (
-                    <button
-                        className="garment-card__remove"
-                        type="button"
-                        aria-label={`Remove ${garment.name}`}
-                        onClick={() => setIsConfirmingDelete(true)}
-                    >
-                        Remove
-                    </button>
+                    <div className="garment-card__actions">
+                        <button
+                            className="garment-card__action"
+                            type="button"
+                            aria-label={`Edit ${garment.name}`}
+                            onClick={() => onEdit(garment)}
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            className="garment-card__action"
+                            type="button"
+                            aria-label={`Remove ${garment.name}`}
+                            onClick={() => setIsConfirmingDelete(true)}
+                        >
+                            Remove
+                        </button>
+                    </div>
                 )}
             </div>
         </article>

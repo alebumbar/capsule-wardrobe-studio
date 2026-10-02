@@ -126,7 +126,7 @@ body {
   font-size: 0.75rem;
 }
 
-.garment-card__remove {
+.garment-card__action {
   margin-top: var(--space-4);
   padding: 0;
   border: 0;
@@ -137,14 +137,20 @@ body {
   text-underline-offset: 0.2em;
 }
 
-.garment-card__remove:hover {
+.garment-card__action:hover {
   color: var(--color-text);
 }
 
-.garment-card__remove:focus-visible {
+.garment-card__action:focus-visible {
   border-radius: 0.2rem;
   outline: 3px solid rgb(109 69 55 / 18%);
   outline-offset: 3px;
+}
+
+.garment-card__actions {
+  display: flex;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
 }
 
 .garment-card__confirmation {
